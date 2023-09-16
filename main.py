@@ -12,8 +12,8 @@ app.version = "0.0.1"
 """
 Another Way
 app = FastAPI(
-    title= 'first application fastAPI',
-    description= 'Una API solo por diversión',
+    title= 'First application fastAPI',
+    description= 'Exploring fastAPI',
     version= '0.0.1',
 )
 """
