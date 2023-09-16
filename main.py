@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+from cats import cats
+
 
 app = FastAPI()
 # Making changes to the docs
@@ -18,7 +21,12 @@ app = FastAPI(
 
 @app.get("/", tags=["home"])
 def message():
-    return "Hello World"
+    return HTMLResponse("<h1>Title</h1>")
+
+
+@app.get("/cats", tags=["cats"])
+def get_cats():
+    return cats
 
 
 # to run terminal: uvicorn main:app
