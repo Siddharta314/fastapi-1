@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Path, Query
+from fastapi import FastAPI, HTTPException, Path, Query, status
 from fastapi.responses import HTMLResponse, JSONResponse
 from typing import List
 from model import Cat
@@ -11,7 +11,7 @@ app = FastAPI(
 )
 
 
-@app.get("/", tags=["home"])
+@app.get("/", tags=["index"])
 def message():
     return HTMLResponse(
         """<h1>Cats API</h1>
@@ -24,9 +24,11 @@ def message():
     )
 
 
-@app.get("/cats", tags=["cats"], response_model=List[Cat])
+@app.get(
+    "/cats", tags=["cats"], response_model=List[Cat], status_code=status.HTTP_200_OK
+)
 def get_cats():
-    return JSONResponse(content=cats)
+    return JSONResponse(status_code=200, content=cats)
 
 
 @app.get("/cats/{id}", tags=["cats"], response_model=Cat)
@@ -34,7 +36,7 @@ def get_cat(id: int = Path(ge=1)):
     for cat in cats:
         if cat["id"] == id:
             return cat
-    raise HTTPException(status_code=404, detail="Cat missing")
+    raise HTTPException(status_code=404, detail="Cat not found")
 
 
 @app.get("/cats/", tags=["cats"], response_model=List[Cat])  # male/female
