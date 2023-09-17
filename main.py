@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Body
 from fastapi.responses import HTMLResponse
 from cats import cats
 
@@ -40,6 +40,14 @@ def get_cat(id: int):
 @app.get("/cats/", tags=["cats"])
 def get_cat_by_gender(gender: str):  # detect parameter query
     return [cat for cat in cats if cat["gender"] == gender]
+
+
+@app.post("/cats/", tags=["cats"])
+def create_cat(
+    id: int = Body(), name: str = Body(), age: int = Body(), gender: str = Body()
+):
+    cats.append({"id": id, "name": name, "age": age, "gender": gender})
+    return cats
 
 
 # to run terminal: uvicorn main:app
