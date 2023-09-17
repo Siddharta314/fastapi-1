@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Body
 from fastapi.responses import HTMLResponse
-from cats import cats
+from cats import cats, Cat
 
 
 app = FastAPI()
@@ -43,20 +43,18 @@ def get_cat_by_gender(gender: str):  # detect parameter query
 
 
 @app.post("/cats/", tags=["cats"])
-def create_cat(
-    id: int = Body(), name: str = Body(), age: int = Body(), gender: str = Body()
-):
-    cats.append({"id": id, "name": name, "age": age, "gender": gender})
+def create_cat(cat: Cat):
+    cats.append(cat)
     return cats
 
 
 @app.put("/cats/{id}", tags=["cats"])
-def update_cat(id: int, name: str = Body(), age: int = Body(), gender: str = Body()):
+def update_cat(id: int, cat_update: Cat):
     for cat in cats:
         if cat["id"] == id:
-            cat["name"] = name
-            cat["age"] = age
-            cat["gender"] = gender
+            cat["name"] = cat_update.name
+            cat["age"] = cat_update.age
+            cat["gender"] = cat_update.gender
             return cats
 
 
