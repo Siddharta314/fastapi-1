@@ -37,5 +37,10 @@ def get_cat(id: int):
     raise HTTPException(status_code=404, detail="Cat missing")
 
 
+@app.get("/cats/", tags=["cats"])
+def get_cat_by_gender(gender: str):  # detect parameter query
+    return [cat for cat in cats if cat["gender"] == gender]
+
+
 # to run terminal: uvicorn main:app
 # option --reload --port 5000
