@@ -1,8 +1,9 @@
 from fastapi import FastAPI, HTTPException, Path, Query, status
 from fastapi.responses import HTMLResponse, JSONResponse
 from typing import List
-from model import Cat
+from model import Cat, User
 from db import cats
+from jwt_manager import create_token
 
 app = FastAPI(
     title="first Catapplication fastAPI",
@@ -71,6 +72,13 @@ def delete_cat(id: int):
     return cats
 
 
+@app.post("/login", tags=["auth"])
+def login(user: User):
+    if user.email == "admin@admin.com" and user.password == "admin":
+        token: str = create_token(vars(user))
+        return JSONResponse(status_code=200, content=token)
+
+
 """
 to run terminal: uvicorn main:app
 option --reload --port 8080
@@ -81,4 +89,5 @@ app = FastAPI(
     version= '0.0.1',
 )
 
+pip install pyjwt dotenv
 """

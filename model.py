@@ -20,3 +20,8 @@ class Cat(BaseModel):
             ]
         }
     }
+
+
+class User(BaseModel):
+    email: str
+    password: str
