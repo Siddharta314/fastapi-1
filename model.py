@@ -1,5 +1,8 @@
+from fastapi import HTTPException, Request
+from fastapi.security import HTTPBearer
 from pydantic import BaseModel, Field
 from typing import Optional
+from jwt_manager import validate_token
 
 
 class Cat(BaseModel):
@@ -25,3 +28,12 @@ class Cat(BaseModel):
 class User(BaseModel):
     email: str
     password: str
+
+
+class JWTBearer(HTTPBearer):
+    async def __call__(self, request: Request):
+        auth = await super().__call__(request)
+        data = validate_token(auth.credentials)
+
+        if data["email"] != "admin@admin.com":
+            raise HTTPException(status_code=403, detail="invalid credentials")

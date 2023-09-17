@@ -1,9 +1,10 @@
-from fastapi import FastAPI, HTTPException, Path, Query, status
+from fastapi import Depends, FastAPI, HTTPException, Path, Query, status
 from fastapi.responses import HTMLResponse, JSONResponse
 from typing import List
-from model import Cat, User
-from db import cats
 from jwt_manager import create_token
+
+from model import Cat, JWTBearer, User
+from db import cats
 
 app = FastAPI(
     title="first Catapplication fastAPI",
@@ -26,7 +27,11 @@ def message():
 
 
 @app.get(
-    "/cats", tags=["cats"], response_model=List[Cat], status_code=status.HTTP_200_OK
+    "/cats",
+    tags=["cats"],
+    response_model=List[Cat],
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(JWTBearer())],
 )
 def get_cats():
     return JSONResponse(status_code=200, content=cats)
