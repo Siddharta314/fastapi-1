@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Body
+from fastapi import FastAPI, HTTPException, Path, Query
 from fastapi.responses import HTMLResponse
 from cats import cats, Cat
 
@@ -9,19 +9,17 @@ app.title = "first application fastAPI"
 app.version = "0.0.1"
 
 
-"""
-Another Way
-app = FastAPI(
-    title= 'First application fastAPI',
-    description= 'Exploring fastAPI',
-    version= '0.0.1',
-)
-"""
-
-
 @app.get("/", tags=["home"])
 def message():
-    return HTMLResponse("<h1>Title</h1>")
+    return HTMLResponse(
+        """<h1>Cats API</h1>
+                        <ul>
+                         <li>/cats</li> 
+                         <li>/cats/1</li> 
+                         <li>/cats/?gender=female</li> 
+                         <li>/cats/Cat</li> 
+                        </ul>"""
+    )
 
 
 @app.get("/cats", tags=["cats"])
@@ -30,15 +28,17 @@ def get_cats():
 
 
 @app.get("/cats/{id}", tags=["cats"])
-def get_cat(id: int):
+def get_cat(id: int = Path(ge=1)):
     for cat in cats:
         if cat["id"] == id:
             return cat
     raise HTTPException(status_code=404, detail="Cat missing")
 
 
-@app.get("/cats/", tags=["cats"])
-def get_cat_by_gender(gender: str):  # detect parameter query
+@app.get("/cats/", tags=["cats"])  # male/female
+def get_cat_by_gender(
+    gender: str = Query(min_length=4, max_length=6)
+):  # detect parameter query
     return [cat for cat in cats if cat["gender"] == gender]
 
 
@@ -66,5 +66,14 @@ def delete_cat(id: int):
     return cats
 
 
-# to run terminal: uvicorn main:app
-# option --reload --port 5000
+"""
+to run terminal: uvicorn main:app
+option --reload --port 8080
+Another Way
+app = FastAPI(
+    title= 'First application fastAPI',
+    description= 'Exploring fastAPI',
+    version= '0.0.1',
+)
+
+"""
