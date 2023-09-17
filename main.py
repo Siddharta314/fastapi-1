@@ -50,5 +50,23 @@ def create_cat(
     return cats
 
 
+@app.put("/cats/{id}", tags=["cats"])
+def update_cat(id: int, name: str = Body(), age: int = Body(), gender: str = Body()):
+    for cat in cats:
+        if cat["id"] == id:
+            cat["name"] = name
+            cat["age"] = age
+            cat["gender"] = gender
+            return cats
+
+
+@app.delete("/cats/{id}", tags=["cats"])
+def delete_cat(id: int):
+    for cat in cats:
+        if cat["id"] == id:
+            cats.remove(cat)
+    return cats
+
+
 # to run terminal: uvicorn main:app
 # option --reload --port 5000
