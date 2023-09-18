@@ -16,6 +16,8 @@ app = FastAPI(
 
 Base.metadata.create_all(bind=engine)
 
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsInBhc3N3b3JkIjoiYWRtaW4ifQ.PqCLn5WclTsjQvky6Ywh_nkj0o2qPVsCWaZ0_RRP_6s
+
 
 @app.get("/", tags=["index"])
 def message():
@@ -76,12 +78,18 @@ def create_cat(cat: Cat):
 
 @app.put("/cats/{id}", tags=["cats"])
 def update_cat(id: int, cat_update: Cat):
-    for cat in cats:
-        if cat["id"] == id:
-            cat["name"] = cat_update.name
-            cat["age"] = cat_update.age
-            cat["gender"] = cat_update.gender
-            return cats
+    db = Session()
+    res = db.query(CatModel).filter(CatModel.id == id).first()
+    if not res:
+        return JSONResponse(status_code=404, content={"message": "Cat not found by ID"})
+    res.name = cat_update.name
+    res.age = cat_update.age
+    res.gender = cat_update.gender
+    db.commit()
+    return JSONResponse(
+        status_code=200,
+        content={"message": "The cat info has been updated successfully"},
+    )
 
 
 @app.delete("/cats/{id}", tags=["cats"])
