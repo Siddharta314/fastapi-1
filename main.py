@@ -3,6 +3,8 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from typing import List
 from jwt_manager import create_token
 
+from config.database import Session, engine, Base
+from models.cat import Cat
 from model import Cat, JWTBearer, User
 from db import cats
 
@@ -11,6 +13,8 @@ app = FastAPI(
     description="Searching for cats",
     version="0.0.1",
 )
+
+Base.metadata.create_all(bind=engine)
 
 
 @app.get("/", tags=["index"])
