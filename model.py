@@ -1,12 +1,13 @@
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPBearer
 from pydantic import BaseModel, Field
-from typing import Optional
 from jwt_manager import validate_token
+
+# from typing import Optional
 
 
 class Cat(BaseModel):
-    id: Optional[int] = None
+    # id: Optional[int] = None
     name: str = Field(max_length=8)
     age: int = Field(gt=0)
     gender: str = Field(min_length=4, max_length=6)
