@@ -8,7 +8,8 @@ from typing import List
 from middlewares.jwt_bearer import JWTBearer
 from config.database import Session
 from models.cat import Cat as CatModel
-from model import Cat
+from schemas.cat import Cat
+from services.cat import CatService
 
 cat_router = APIRouter()
 
@@ -22,14 +23,14 @@ cat_router = APIRouter()
 )
 def get_cats():
     db = Session()
-    res = db.query(CatModel).all()
+    res = CatService(db).get_cats()
     return JSONResponse(status_code=200, content=jsonable_encoder(res))
 
 
 @cat_router.get("/cats/{id}", tags=["cats"], response_model=Cat)
 def get_cat_by_id(id: int = Path(ge=1)):
     db = Session()
-    res = db.query(CatModel).filter(CatModel.id == id).first()
+    res = CatService(db).get_cat(id)
     if res:
         return JSONResponse(status_code=200, content=jsonable_encoder(res))
     raise HTTPException(status_code=404, detail="Cat not found")
@@ -40,7 +41,7 @@ def get_cat_by_gender(
     gender: str = Query(min_length=4, max_length=6)
 ):  # detect parameter query
     db = Session()
-    res = db.query(CatModel).filter(CatModel.gender == gender).all()
+    res = CatService(db).get_cat_by_gender(gender)
     if res:
         return JSONResponse(status_code=200, content=jsonable_encoder(res))
     return JSONResponse(
