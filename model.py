@@ -1,7 +1,5 @@
 from pydantic import BaseModel, Field
 
-# from typing import Optional
-
 
 class Cat(BaseModel):
     # id: Optional[int] = None
@@ -20,8 +18,3 @@ class Cat(BaseModel):
             ]
         }
     }
-
-
-class User(BaseModel):
-    email: str
-    password: str
