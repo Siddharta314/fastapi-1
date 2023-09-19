@@ -52,22 +52,18 @@ def get_cat_by_gender(
 @cat_router.post("/cats/", tags=["cats"])
 def create_cat(cat: Cat):
     db = Session()
-    new_cat = CatModel(**vars(cat))
-    db.add(new_cat)
-    db.commit()
+    CatService(db).create_cat(cat)
     return JSONResponse(status_code=200, content={"message": "New cat added to db"})
 
 
 @cat_router.put("/cats/{id}", tags=["cats"])
 def update_cat(id: int, cat_update: Cat):
     db = Session()
-    res = db.query(CatModel).filter(CatModel.id == id).first()
+    res = CatService(db).get_cat(id)
     if not res:
         return JSONResponse(status_code=404, content={"message": "Cat not found by ID"})
-    res.name = cat_update.name
-    res.age = cat_update.age
-    res.gender = cat_update.gender
-    db.commit()
+    CatService(db).update_cat(id, cat_update)
+
     return JSONResponse(
         status_code=200,
         content={"message": "The cat info has been updated successfully"},
@@ -77,11 +73,10 @@ def update_cat(id: int, cat_update: Cat):
 @cat_router.delete("/cats/{id}", tags=["cats"])
 def delete_cat(id: int):
     db = Session()
-    res = db.query(CatModel).filter(CatModel.id == id).first()
+    res = CatService(db).get_cat(id)
     if not res:
         return JSONResponse(status_code=404, content={"message": "Cat not found by ID"})
-    db.delete(res)
-    db.commit()
+    CatService(db).delete_cat(id)
     return JSONResponse(
         status_code=200,
         content={"message": "The cat has been deleted forever"},
