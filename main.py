@@ -5,8 +5,9 @@ from typing import List
 from jwt_manager import create_token
 from config.database import Session, engine, Base
 from models.cat import Cat as CatModel
-from model import Cat, JWTBearer, User
+from model import Cat, User
 from middlewares.error_handler import ErrorHandler
+from middlewares.jwt_bearer import JWTBearer
 
 app = FastAPI(
     title="first Catapplication fastAPI",
