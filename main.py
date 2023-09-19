@@ -6,7 +6,6 @@ from jwt_manager import create_token
 from config.database import Session, engine, Base
 from models.cat import Cat as CatModel
 from model import Cat, JWTBearer, User
-from db import cats
 
 app = FastAPI(
     title="first Catapplication fastAPI",
@@ -94,10 +93,16 @@ def update_cat(id: int, cat_update: Cat):
 
 @app.delete("/cats/{id}", tags=["cats"])
 def delete_cat(id: int):
-    for cat in cats:
-        if cat["id"] == id:
-            cats.remove(cat)
-    return cats
+    db = Session()
+    res = db.query(CatModel).filter(CatModel.id == id).first()
+    if not res:
+        return JSONResponse(status_code=404, content={"message": "Cat not found by ID"})
+    db.delete(res)
+    db.commit()
+    return JSONResponse(
+        status_code=200,
+        content={"message": "The cat has been deleted forever"},
+    )
 
 
 @app.post("/login", tags=["auth"])
@@ -108,14 +113,10 @@ def login(user: User):
 
 
 """
-to run terminal: uvicorn main:app
+1) activate env
+2) pip install fastapi uvicorn 
+3) to run: uvicorn main:app
 option --reload --port 8080
-Another Way
-app = FastAPI(
-    title= 'First application fastAPI',
-    description= 'Exploring fastAPI',
-    version= '0.0.1',
-)
 
 pip install pyjwt dotenv
 """
