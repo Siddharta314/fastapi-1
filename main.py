@@ -6,12 +6,15 @@ from jwt_manager import create_token
 from config.database import Session, engine, Base
 from models.cat import Cat as CatModel
 from model import Cat, JWTBearer, User
+from middlewares.error_handler import ErrorHandler
 
 app = FastAPI(
     title="first Catapplication fastAPI",
     description="Searching for cats",
     version="0.0.1",
 )
+app.add_middleware(ErrorHandler)
+
 
 Base.metadata.create_all(bind=engine)
 
